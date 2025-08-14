@@ -52,6 +52,27 @@ export const common = {
   },
 
   actions: {                                          // 비동기 상태 변경 메서드
+    async fetchMenuList({ commit }) {
+      try {
+        const menuList = await httpGet("/api/menu");
+        commit('setMenuList', menuList);
+        return menuList;
+      } catch (error) {
+        console.error('Failed to load menuList:', error);
+        throw error;
+      }
+    },
+
+    async fetchRouteMenuList({ commit }) {
+      try {
+        const routeMenuList = await httpGet("/api/menu/route");
+        commit('setRouteMenuList', routeMenuList);
+        return routeMenuList;
+      } catch (error) {
+        console.error('Failed to load routeMenuList:', error);
+        throw error;
+      }
+    }
   },
 
   modules: {                                          // 필요한 경우 모듈 추가

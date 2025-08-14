@@ -35,6 +35,12 @@ export const httpDelete = async (url, config = {}) => {
   return response.data;
 };
 
+// PATCH 요청 메서드
+export const httpPatch = async (url, data = {}, config = {}) => {
+  const response = await instance.patch(url, data, config);
+  return response.data;
+};
+
 // Axios 전역 에러 핸들러 설정
 instance.interceptors.response.use(
   response => response,

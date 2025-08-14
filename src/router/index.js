@@ -47,9 +47,7 @@ const routes = [
     path: '/',
     component: DefaultLayout,
     children: [
-
-      // add home base path: '/'
-      { path: '', component: Home },  // 기본 패스 추가
+      { path: '/home', component: Home },
       ...routeList.value.filter(x => x.layoutType === 'DefaultLayout')
     ]
   },
@@ -61,6 +59,51 @@ const routes = [
       { path: '/test', component: Home },
       ...routeList.value.filter(x => x.layoutType === 'FullLayout')
     ]
+  },
+  // 로그인 페이지
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import('@/views/LoginPage.vue'),
+    meta: { requiresGuest: true }
+  },
+  
+  // Todo 관련 경로들은 별도로 처리 (TodoApp이 자체 레이아웃을 가지므로)
+  { 
+    path: '', 
+    name: 'TodoApp',
+    component: () => import('@/pages/TodoApp.vue'),
+    meta: { requiresAuth: true }
+  },
+  { 
+    path: '/todo', 
+    name: 'TodoMain',
+    component: () => import('@/pages/TodoApp.vue'),
+    meta: { requiresAuth: true }
+  },
+  { 
+    path: '/todo/inbox', 
+    name: 'TodoInbox',
+    component: () => import('@/pages/TodoApp.vue'),
+    meta: { requiresAuth: true }
+  },
+  { 
+    path: '/todo/today', 
+    name: 'TodoToday',
+    component: () => import('@/pages/TodoApp.vue'),
+    meta: { requiresAuth: true }
+  },
+  { 
+    path: '/todo/week', 
+    name: 'TodoWeek',
+    component: () => import('@/pages/TodoApp.vue'),
+    meta: { requiresAuth: true }
+  },
+  { 
+    path: '/todo/important', 
+    name: 'TodoImportant',
+    component: () => import('@/pages/TodoApp.vue'),
+    meta: { requiresAuth: true }
   }
 ]
 
@@ -68,6 +111,20 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
+})
+
+// 인증 가드
+router.beforeEach((to, from, next) => {
+  const user = JSON.parse(localStorage.getItem('user') || 'null')
+  const isAuthenticated = !!user
+  
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    next('/login')
+  } else if (to.meta.requiresGuest && isAuthenticated) {
+    next('/todo')
+  } else {
+    next()
+  }
 })
 
 export default router
